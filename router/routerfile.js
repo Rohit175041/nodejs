@@ -7,7 +7,7 @@ const nopagefound=require('../404');
 
 
 // user authentication 
-route.use('/auth',authRouter);
+// route.use('/auth',authRouter);
 
 // user crud operation
 route.use('/users', userRouter);
