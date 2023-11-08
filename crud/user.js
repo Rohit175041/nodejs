@@ -9,7 +9,7 @@ route.get("/:id", async (request, response) => {
         let data = await userschema.findById(request.body.id);
 
         if (!data) {
-            return response.send('data not found');
+            return response.status(404).send('data not found');
         }
         return response.status(200).send(data);
 
@@ -25,7 +25,7 @@ route.get("/", async (request, response) => {
         let data = await userschema.find();
 
         if (!data) {
-            return response.send('data not found')
+            return response.status(404).send('data not found')
         }
         return response.status(200).send(data);
 
@@ -45,7 +45,7 @@ route.post("/", async (request, response) => {
             name: request.body.name,
         });
         if (!newUser) {
-            return response.send('data not inserted')
+            return response.status(404).send('data not inserted')
         }
         const result = await userschema.create(newUser);
         return response.status(200).send(

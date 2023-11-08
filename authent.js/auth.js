@@ -3,51 +3,59 @@ const secret_key = "rohit@123";
 const express = require("express");
 const router = express.Router();
 
-router.get("/", (req, resp) => {
-    resp.json({
+router.get("/", (request, response) => {
+    response.json({
         message: "user Authentication"
     })
 })
 
-router.post("/", (req, resp) => {
-    const user = {
-        id: 1,
-        username: "rohit",
-        email: "rohit@gmail.com"
-    }
-    jwt.sign({ user }, secret_key, { expiresIn: '600s' }, (error, token) => {
-        resp.json({
-            token
+router.post("/", (request, response) => {
+    try {
+        const user = {
+            id: 1,
+            username: "rohit",
+            email: "rohit@gmail.com"
+        }
+        // console.log(token);
+        jwt.sign({ user }, secret_key, { expiresIn: '6000s' }, (error, token) => {
+            return response.status(200).send(token);    
         });
-        console.log(token)
-    });
+    } catch (error) {
+        console.log(error.message);
+        response.status(500).send({ message: error.message });
+    }
 })
 
-router.post("/", verify_token, (req, resp) => {
-    jwt.verify(req.token, secret_key, (error, authdata) => {
-        if (error) {
-            resp.send({
-                result: "invalid token"
-            });
-        } else {
-            resp.json({
+router.post("/", verify_token, (request, response) => {
+    try {
+        jwt.verify(request.token, secret_key, (error, authdata) => {
+            if (error) {
+                return response.status(404).send({
+                    result: "invalid token"
+                });
+            }
+            return response.status(200).send({
                 message: "profile accessed",
                 authdata
             });
-        }
-    })
+
+        });
+    } catch (error) {
+        console.log(error.message);
+        response.status(500).send({ message: error.message });
+    }
 })
 
 //token verification
-function verify_token(req, resp, next) {
-    const bearerHeader = req.headers["authorization"];
+function verify_token(request, response, next) {
+    const bearerHeader = request.headers["authorization"];
     if (typeof bearerHeader !== 'undefined') {
         const bearer = bearerHeader.split(" ");
         const token = bearer[1];
-        req.token = token;
+        request.token = token;
         next();
     } else {
-        resp.send(
+        response.send(
             {
                 result: 'Token is not valid'
             }
