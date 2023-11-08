@@ -5,8 +5,8 @@ const userschema = require('../databse/schema');
 // get user by id
 route.get("/:id", async (request, response) => {
     try {
-        // console.log(request.body.id);
-        let data = await userschema.findById(request.body.id);
+        console.log(request.params.id);
+        let data = await userschema.findById(request.params.id);
 
         if (!data) {
             return response.status(404).send('data not found');
@@ -67,7 +67,7 @@ route.put("/:id", async (request, response) => {
     try {
 
         let data = await userschema.findOneAndUpdate({
-            "_id": request.body.id,
+            "_id": request.params.id,
         }, {
             "name": request.body.name,
             "uid": request.body.uid
@@ -108,8 +108,8 @@ route.delete("/delete_all", async (request, response) => {
 // delete user data by _id
 route.delete("/:id", async (request, response) => {
     try {
-        console.log(request.body.id);
-        var id = request.body.id;
+        console.log(request.params.id);
+        var id = request.params.id;
         let data = await userschema.findByIdAndDelete(id);
         console.log(data);
         if (!data) {
@@ -122,8 +122,6 @@ route.delete("/:id", async (request, response) => {
     }
 
 })
-
-
 
 
 module.exports = route;
