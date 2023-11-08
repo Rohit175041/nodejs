@@ -5,11 +5,11 @@ const mongoose = require('mongoose');
 const collection_structure = new mongoose.Schema({
     name: {
         type: String,
-        require: true
+        required: true
     },
-    id: {
+    uid: {
         type: String,
-        default: 0
+        required:true
     }
 })
 

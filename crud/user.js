@@ -2,72 +2,128 @@ const express = require('express');
 const route = express.Router();
 const userschema = require('../databse/schema');
 
+// get user by id
+route.get("/:id", async (request, response) => {
+    try {
+        // console.log(request.body.id);
+        let data = await userschema.findById(request.body.id);
 
-route.get("/", async (req, resp) => {
-    console.log(req.body._id);
-    let data = await userschema.findById(req.body._id);
+        if (!data) {
+            return response.send('data not found');
+        }
+        return response.status(200).send(data);
 
-    if (!data) {
-        resp.send('data not found')
-    } else {
-        resp.send(data);
+    } catch (error) {
+        console.log(error.message);
+        response.status(500).send({ message: error.message });
+    }
+})
+
+// get all users
+route.get("/", async (request, response) => {
+    try {
+        let data = await userschema.find();
+
+        if (!data) {
+            return response.send('data not found')
+        }
+        return response.status(200).send(data);
+
+    } catch (error) {
+        console.log(error.message);
+        response.status(500).send({ message: error.message });
     }
 
 })
 
-route.post("/", async (req, resp) => {
-    console.log(req.body);
-    const newUser = new userschema({
-        id: req.body.id,
-        name: req.body.name,
-    });
-    if (!newUser) {
-        resp.send('data not inserted')
-    } else {
-        newUser.save();
-        resp.send(
+// post newuser data
+route.post("/", async (request, response) => {
+    try {
+        // console.log(request.body);
+        const newUser = new userschema({
+            uid: request.body.uid,
+            name: request.body.name,
+        });
+        if (!newUser) {
+            return response.send('data not inserted')
+        }
+        const result = await userschema.create(newUser);
+        return response.status(200).send(
             {
-                message: "data inserted ",
+                message: result
             }
         );
+
+    } catch (error) {
+        console.log(error.message);
+        response.status(500).send({ message: error.message });
     }
 
 })
 
-route.put("/", async (req, resp) => {
-    const { _id, id, name } = req.body
-    let data = await userschema.findOneAndUpdate({
-        "_id": _id,
-    }, {
-        "name": name,
-        "id": id
-    });
-    console.log(req.body);
-    if (!data) {
-        resp.send('data not found')
-    } else {
-        resp.send({
-            message: "Updated successfully",
-            user: req.body
+
+// update existin user data
+route.put("/:id", async (request, response) => {
+    try {
+
+        let data = await userschema.findOneAndUpdate({
+            "_id": request.body.id,
+        }, {
+            "name": request.body.name,
+            "uid": request.body.uid
         });
+        console.log(request.body);
+        if (!data) {
+            return response.status(404).send('data not found')
+        }
+        return response.status(200).send({
+            message: "Updated successfully",
+            user: request.body
+        });
+
+    } catch (error) {
+        console.log(error.message);
+        response.status(500).send({ message: error.message });
+    }
+
+})
+
+
+// datae all user data
+route.delete("/delete_all", async (request, response) => {
+    try {
+        let data = await userschema.deleteMany({});
+        console.log(data);
+        if (!data) {
+            response.status(404).send('data not deleted')
+        }
+        response.status(200).send({ message: "Database deleted successfully" });
+    } catch (error) {
+        console.log(error.message);
+        response.status(500).send({ message: error.message });
+    }
+
+})
+
+// delete user data by _id
+route.delete("/:id", async (request, response) => {
+    try {
+        console.log(request.body.id);
+        var id = request.body.id;
+        let data = await userschema.findByIdAndDelete(id);
+        console.log(data);
+        if (!data) {
+            response.status(404).send('data not found')
+        }
+        response.status(200).send('data deleted');
+    } catch (error) {
+        console.log(error.message);
+        response.status(500).send({ message: error.message });
     }
 
 })
 
 
 
-route.delete("/", async (req, resp) => {
-    console.log(req.body._id);
-    var id = req.body._id;
-    let data = await userschema.findByIdAndDelete(id);
-    console.log(data);
-    if (!data) {
-        resp.send('data not found')
-    } else {
-        // data.remove();
-        resp.send('data deleted')
-    }
-
-})
 
 module.exports = route;

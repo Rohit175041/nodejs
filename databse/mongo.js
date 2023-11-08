@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const databaseName='database'
-const url = "mongodb+srv://rohit2:rohit@cluster0.sjwfxza.mongodb.net/database?retryWrites=true&w=majority";
+const url = "mongodb+srv://rohitsingh:rohitsingh123@cluster0.sjwfxza.mongodb.net/nodejs?retryWrites=true&w=majority";
 
 const connection=mongoose.connect(url).then((ans) => {
-    console.log("ConnectedSuccessful")
+    console.log("databse Connected Successfully")
 }).catch((err) => {
-    console.log("Error in the Connection ")
+    console.log("Error in databse Connection ")
 })
 
 module.exports = connection;

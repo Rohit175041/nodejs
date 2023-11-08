@@ -4,7 +4,7 @@
 const express = require("express");
 const bodyParser = require("body-parser")
 const connection = require('./databse/mongo');
-const roterfile = require('./router/routerfile')
+const routerfile = require('./router/routerfile')
 const PORT = process.env.PORT || 5000;
 const app = express();
 
@@ -12,7 +12,7 @@ const app = express();
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.use("/", roterfile);
+app.use("/", routerfile);
 
 
 
